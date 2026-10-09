@@ -1,4 +1,4 @@
-﻿@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
 
 /*
  * Lyra Music Project (2026)
@@ -137,6 +137,7 @@ import com.shnwaz.lyramusic.constants.QueuePeekHeight
 import com.shnwaz.lyramusic.constants.SliderStyle
 import com.shnwaz.lyramusic.constants.SliderStyleKey
 import com.shnwaz.lyramusic.extensions.togglePlayPause
+import com.shnwaz.lyramusic.extensions.toggleRepeatMode
 import com.shnwaz.lyramusic.extensions.metadata
 import com.shnwaz.lyramusic.models.MediaMetadata
 import com.shnwaz.lyramusic.ui.component.BottomSheet
@@ -702,6 +703,7 @@ fun BottomSheetPlayer(
                 position = position,
                 duration = duration,
                 pureBlack = pureBlack,
+                state = state,
             )
         },
     ) {
@@ -783,7 +785,7 @@ fun BottomSheetPlayer(
             )
         }
 
-        if (!state.isCollapsed && playerDesignStyle != PlayerDesignStyle.V5 && playerDesignStyle != PlayerDesignStyle.V7) {
+        if (!state.isCollapsed && playerDesignStyle != PlayerDesignStyle.V5 && playerDesignStyle != PlayerDesignStyle.V7 && playerDesignStyle != PlayerDesignStyle.V3) {
             PlayerBackground(
                 playerBackground = playerBackground,
                 mediaMetadata = mediaMetadata,
@@ -903,6 +905,54 @@ fun BottomSheetPlayer(
                             Spacer(Modifier.height(16.dp))
                         }
                     }
+                } else if (playerDesignStyle == PlayerDesignStyle.V3) {
+                    MinimalPlayer(
+                        mediaMetadata = enrichedMetadata ?: mediaMetadata,
+                        nextMediaMetadata = nextUpMetadata,
+                        position = sliderPosition ?: position,
+                        duration = duration,
+                        isPlaying = isPlaying,
+                        isLoading = isLoading,
+                        canSkipPrevious = canSkipPrevious,
+                        canSkipNext = canSkipNext,
+                        onSeek = updatedOnSliderValueChange,
+                        onSeekFinished = updatedOnSliderValueChangeFinished,
+                        onPlayPause = {
+                            if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                                playerConnection.player.seekTo(0, 0)
+                                playerConnection.player.playWhenReady = true
+                            } else {
+                                playerConnection.player.togglePlayPause()
+                            }
+                        },
+                        onPrevious = playerConnection::seekToPrevious,
+                        onNext = playerConnection::seekToNext,
+                        onCollapse = state::collapseSoft,
+                        onMenuClick = {
+                            val cur = enrichedMetadata ?: mediaMetadata
+                            if (cur != null) {
+                                menuState.show {
+                                    PlayerMenu(
+                                        mediaMetadata = cur,
+                                        navController = navController,
+                                        playerBottomSheetState = state,
+                                        onShowDetailsDialog = {
+                                            bottomSheetPageState.show {
+                                                ShowMediaInfo(cur.id)
+                                            }
+                                        },
+                                        onDismiss = menuState::dismiss,
+                                    )
+                                }
+                            }
+                        },
+                        isLiked = currentSongLiked,
+                        onLikeClick = playerConnection::toggleLike,
+                        repeatMode = repeatMode,
+                        onRepeatClick = { playerConnection.player.toggleRepeatMode() },
+                        onQueueClick = queueSheetState::expandSoft,
+                        state = state,
+                    )
                 } else {
                     Row(
                         modifier =
@@ -1044,9 +1094,56 @@ fun BottomSheetPlayer(
                                 controlsContent(it)
                             }
 
-                            Spacer(Modifier.height(24.dp))
                         }
                     }
+                } else if (playerDesignStyle == PlayerDesignStyle.V3) {
+                    MinimalPlayer(
+                        mediaMetadata = enrichedMetadata ?: mediaMetadata,
+                        nextMediaMetadata = nextUpMetadata,
+                        position = sliderPosition ?: position,
+                        duration = duration,
+                        isPlaying = isPlaying,
+                        isLoading = isLoading,
+                        canSkipPrevious = canSkipPrevious,
+                        canSkipNext = canSkipNext,
+                        onSeek = updatedOnSliderValueChange,
+                        onSeekFinished = updatedOnSliderValueChangeFinished,
+                        onPlayPause = {
+                            if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                                playerConnection.player.seekTo(0, 0)
+                                playerConnection.player.playWhenReady = true
+                            } else {
+                                playerConnection.player.togglePlayPause()
+                            }
+                        },
+                        onPrevious = playerConnection::seekToPrevious,
+                        onNext = playerConnection::seekToNext,
+                        onCollapse = state::collapseSoft,
+                        onMenuClick = {
+                            val cur = enrichedMetadata ?: mediaMetadata
+                            if (cur != null) {
+                                menuState.show {
+                                    PlayerMenu(
+                                        mediaMetadata = cur,
+                                        navController = navController,
+                                        playerBottomSheetState = state,
+                                        onShowDetailsDialog = {
+                                            bottomSheetPageState.show {
+                                                ShowMediaInfo(cur.id)
+                                            }
+                                        },
+                                        onDismiss = menuState::dismiss,
+                                    )
+                                }
+                            }
+                        },
+                        isLiked = currentSongLiked,
+                        onLikeClick = playerConnection::toggleLike,
+                        repeatMode = repeatMode,
+                        onRepeatClick = { playerConnection.player.toggleRepeatMode() },
+                        onQueueClick = queueSheetState::expandSoft,
+                        state = state,
+                    )
                 } else {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
