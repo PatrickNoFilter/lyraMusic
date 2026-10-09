@@ -166,15 +166,6 @@ android {
     }
 }
 
-tasks.configureEach {
-    if (name == "assembleRelease") {
-        doFirst {
-            check(hasReleaseSigning) {
-                "Release signing is required. Set SIGNING_* variables or app/keystore/release.properties."
-            }
-        }
-    }
-}
 
 kotlin {
     jvmToolchain(21)

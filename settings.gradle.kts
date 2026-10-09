@@ -28,9 +28,21 @@ rootProject.name = "Lyra Music"
 include(":app")
 include(":innertube")
 
-// GitHub's managed CodeQL checkout does not initialize Git submodules. Keep
-// provider modules optional for that partial checkout; normal builds include
-// them whenever the lyric submodule is present.
+// Automatically initialize git submodules if missing (e.g. CI / partial checkouts)
+if (!file("lyrics/kugou/build.gradle.kts").exists() && file(".git").exists()) {
+    try {
+        println("Submodules missing; initializing via git...")
+        ProcessBuilder("git", "submodule", "update", "--init", "--recursive")
+            .directory(rootDir)
+            .redirectOutput(ProcessBuilder.Redirect.INHERIT)
+            .redirectError(ProcessBuilder.Redirect.INHERIT)
+            .start()
+            .waitFor(120, java.util.concurrent.TimeUnit.SECONDS)
+    } catch (e: Exception) {
+        println("Could not initialize submodules: ${e.message}")
+    }
+}
+
 fun includeIfPresent(path: String, directory: String) {
     if (file(directory).isDirectory) include(path)
 }
