@@ -122,7 +122,6 @@ private fun TvMiniPlayerBar(onOpenPlayer: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 48.dp, vertical = 8.dp),
-        shape = androidx.tv.material3.ShapeDefaults.Large,
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
