@@ -11,6 +11,7 @@ package com.shnwaz.lyramusic.ui.tv
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +38,8 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
     val quickPicks by homeViewModel.quickPicks.collectAsStateWithLifecycle()
     val newReleases by newReleaseViewModel.newReleaseAlbums.collectAsStateWithLifecycle()
     val chartsPage by chartsViewModel.chartsPage.collectAsStateWithLifecycle()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) { chartsViewModel.loadCharts() }
 
     fun playSongItem(item: SongItem) {
         playerConnection?.playQueue(YouTubeQueue.radio(item.toMediaMetadata()))
