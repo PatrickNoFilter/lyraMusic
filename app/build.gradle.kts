@@ -188,6 +188,8 @@ dependencies {
 
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
+    implementation(libs.tv.foundation)
+    implementation(libs.tv.material)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.util)
     implementation(libs.media)
