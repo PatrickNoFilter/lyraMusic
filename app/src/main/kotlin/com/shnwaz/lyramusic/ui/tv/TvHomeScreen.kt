@@ -15,8 +15,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.foundation.lazy.list.TvLazyColumn
-import androidx.tv.foundation.lazy.list.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.innertube.models.AlbumItem
 import com.shnwaz.lyramusic.innertube.models.SongItem
@@ -43,7 +43,7 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
         onOpenPlayer()
     }
 
-    TvLazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         val picks = quickPicks
         if (!picks.isNullOrEmpty()) {
             item(key = "quick_picks") {

@@ -26,8 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.tv.foundation.lazy.list.TvLazyRow
-import androidx.tv.foundation.lazy.list.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.tv.material3.Card
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
@@ -100,7 +100,7 @@ fun <T> TvRail(
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 32.dp, top = 16.dp, bottom = 8.dp),
         )
-        TvLazyRow(
+        LazyRow(
             contentPadding = PaddingValues(horizontal = 32.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {

@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.foundation.lazy.list.TvLazyColumn
-import androidx.tv.foundation.lazy.list.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import com.shnwaz.lyramusic.LocalDatabase
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.extensions.toMediaItem
@@ -42,7 +42,7 @@ fun TvLibraryScreen() {
         return
     }
 
-    TvLazyColumn(
+    LazyColumn(
         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxSize(),
