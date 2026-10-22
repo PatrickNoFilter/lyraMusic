@@ -97,10 +97,10 @@ fun TvPlayerScreen() {
             contentDescription = current.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(280.dp)
+                .size(200.dp)
                 .clip(RoundedCornerShape(16.dp)),
         )
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
         Text(
             text = current.title,
             style = MaterialTheme.typography.headlineSmall,
@@ -115,7 +115,7 @@ fun TvPlayerScreen() {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -138,7 +138,7 @@ fun TvPlayerScreen() {
                 style = MaterialTheme.typography.bodySmall,
             )
         }
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(16.dp))
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
