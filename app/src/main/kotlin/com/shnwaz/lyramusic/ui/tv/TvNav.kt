@@ -136,7 +136,7 @@ fun TvNav() {
 
         // Original Lyra screens, hosted as-is in Lyra's own dark theme
         Box(modifier = Modifier.weight(1f)) {
-            OpenTuneTheme(darkTheme = true) {
+            androidx.compose.material3.MaterialTheme(colorScheme = darkColorScheme(background = Color(0xFF1A120B), surface = Color(0xFF1A120B))) {
             NavHost(
                 navController = navController,
                 startDestination = Screens.Home.route,
