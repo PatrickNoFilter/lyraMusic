@@ -42,7 +42,7 @@ fun TvTheme(content: @Composable () -> Unit) {
         colorScheme = darkColorScheme(
             background = Color(0xFF1A120B),
             surface = Color(0xFF2A2018),
-            primary = Color(0xFFE8A33D),
+            primary = Color(0xFF2196F3),
             onPrimary = Color(0xFF1A120B),
             onBackground = Color.White,
             onSurface = Color.White,

@@ -108,7 +108,7 @@ fun TvLibraryScreen() {
                                 Text(
                                     text = "${idx + 1}.",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color(0xFFE8A33D),
+                                    color = Color(0xFF2196F3),
                                     modifier = Modifier.width(32.dp),
                                 )
                                 Column(modifier = Modifier.weight(1f)) {

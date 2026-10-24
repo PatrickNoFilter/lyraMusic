@@ -177,7 +177,7 @@ fun TvPlayerScreen() {
                     text = "Up next (${queueWindows.size})",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFE8A33D),
+                    color = Color(0xFF2196F3),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
@@ -198,7 +198,7 @@ fun TvPlayerScreen() {
                         Text(
                             text = "${idx + 1}.",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFFE8A33D),
+                            color = Color(0xFF2196F3),
                             modifier = Modifier.width(36.dp),
                         )
                         Column(modifier = Modifier.weight(1f)) {
