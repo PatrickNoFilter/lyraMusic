@@ -3,9 +3,9 @@
  * Shnwaz (github.com/shnwazdeveloper)
  * Licensed Under GPL-3.0 | see git history for contributors
  *
- * TV now-playing screen: fixed player section on top (artwork, title,
- * progress, controls) + scrollable up-next queue below. The player stays
- * on screen so D-pad UP from the queue always returns to the controls.
+ * TV now-playing screen, horizontal layout: player (artwork, title,
+ * progress, controls) on the left, up-next queue on the right.
+ * D-pad LEFT/RIGHT moves between player and queue, UP/DOWN in the queue.
  */
 
 package com.shnwaz.lyramusic.ui.tv
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -88,144 +89,162 @@ fun TvPlayerScreen() {
         return
     }
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 64.dp, vertical = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .padding(horizontal = 48.dp, vertical = 24.dp),
     ) {
-        // Fixed player section — always on screen, always focusable.
-        AsyncImage(
-            model = current.song.thumbnailUrl,
-            contentDescription = current.title,
-            contentScale = ContentScale.Crop,
+        // Left: player
+        Column(
             modifier = Modifier
-                .size(180.dp)
-                .clip(RoundedCornerShape(16.dp)),
-        )
-        Spacer(Modifier.height(12.dp))
-        Text(
-            text = current.title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = current.artists.joinToString { it.name },
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+                .weight(0.9f)
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
+            AsyncImage(
+                model = current.song.thumbnailUrl,
+                contentDescription = current.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(240.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+            )
+            Spacer(Modifier.height(16.dp))
             Text(
-                text = formatMs(positionMs),
-                style = MaterialTheme.typography.bodySmall,
+                text = current.title,
+                style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.width(12.dp))
-            LinearProgressIndicator(
-                progress = {
-                    if (durationMs > 0) positionMs.toFloat() / durationMs else 0f
-                },
-                modifier = Modifier.weight(1f),
-            )
-            Spacer(Modifier.width(12.dp))
             Text(
-                text = formatMs(durationMs),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White,
+                text = current.artists.joinToString { it.name },
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
-        }
-        Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Button(onClick = { player.seekTo((positionMs - 10_000).coerceAtLeast(0)) }) {
-                Text("-10s")
-            }
-            Button(onClick = { playerConnection.seekToPrevious() }) {
-                Icon(Icons.Filled.SkipPrevious, contentDescription = "Previous")
-            }
-            Button(
-                onClick = { if (isPlaying) player.pause() else player.play() },
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
-                    contentDescription = if (isPlaying) "Pause" else "Play",
+                Text(
+                    text = formatMs(positionMs),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
+                )
+                Spacer(Modifier.width(12.dp))
+                LinearProgressIndicator(
+                    progress = {
+                        if (durationMs > 0) positionMs.toFloat() / durationMs else 0f
+                    },
+                    modifier = Modifier.weight(1f),
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = formatMs(durationMs),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
                 )
             }
-            Button(onClick = { playerConnection.seekToNext() }) {
-                Icon(Icons.Filled.SkipNext, contentDescription = "Next")
-            }
-            Button(onClick = { player.seekTo(positionMs + 10_000) }) {
-                Text("+10s")
+            Spacer(Modifier.height(16.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Button(onClick = { player.seekTo((positionMs - 10_000).coerceAtLeast(0)) }) {
+                    Text("-10s")
+                }
+                Button(onClick = { playerConnection.seekToPrevious() }) {
+                    Icon(Icons.Filled.SkipPrevious, contentDescription = "Previous")
+                }
+                Button(
+                    onClick = { if (isPlaying) player.pause() else player.play() },
+                ) {
+                    Icon(
+                        if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                        contentDescription = if (isPlaying) "Pause" else "Play",
+                    )
+                }
+                Button(onClick = { playerConnection.seekToNext() }) {
+                    Icon(Icons.Filled.SkipNext, contentDescription = "Next")
+                }
+                Button(onClick = { player.seekTo(positionMs + 10_000) }) {
+                    Text("+10s")
+                }
             }
         }
 
-        // Scrollable queue below — D-pad UP from here returns to the
-        // controls above because they are fixed siblings, not lazy items.
-        if (queueWindows.isNotEmpty()) {
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "Up next (${queueWindows.size})",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF2196F3),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentPadding = PaddingValues(bottom = 16.dp),
-            ) {
-                itemsIndexed(queueWindows, key = { idx, _ -> idx }) { idx, window ->
-                    val meta = window.mediaItem.metadata
-                    Button(
-                        onClick = { player.seekToDefaultPosition(idx) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 2.dp),
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth(),
+        Spacer(Modifier.width(32.dp))
+
+        // Right: playlist queue
+        Column(
+            modifier = Modifier
+                .weight(1.1f)
+                .fillMaxHeight(),
+        ) {
+            if (queueWindows.isNotEmpty()) {
+                Text(
+                    text = "Up next (${queueWindows.size})",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF2196F3),
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                ) {
+                    itemsIndexed(queueWindows, key = { idx, _ -> idx }) { idx, window ->
+                        val meta = window.mediaItem.metadata
+                        Button(
+                            onClick = { player.seekToDefaultPosition(idx) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
                         ) {
-                            Text(
-                                text = "${idx + 1}.",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF2196F3),
-                                modifier = Modifier.width(36.dp),
-                            )
-                            Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
                                 Text(
-                                    text = meta?.title ?: "Unknown",
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
+                                    text = "${idx + 1}.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color(0xFF2196F3),
+                                    modifier = Modifier.width(36.dp),
                                 )
-                                Text(
-                                    text = meta?.artists?.joinToString { it.name } ?: "",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = meta?.title ?: "Unknown",
+                                        color = Color.White,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                    Text(
+                                        text = meta?.artists?.joinToString { it.name } ?: "",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                Text(
+                    text = "No queue",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }
