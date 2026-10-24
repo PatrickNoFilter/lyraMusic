@@ -183,7 +183,7 @@ fun TvPlayerScreen() {
                         .padding(bottom = 8.dp),
                 )
             }
-            itemsIndexed(queueWindows, key = { idx, w -> w.uid }) { idx, window ->
+            itemsIndexed(queueWindows, key = { idx, _ -> idx }) { idx, window ->
                 val meta = window.mediaItem.metadata
                 Button(
                     onClick = { player.seekToDefaultPosition(idx) },
