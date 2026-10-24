@@ -259,6 +259,13 @@ class MusicService :
     private var wakeLock: PowerManager.WakeLock? = null
     private var wakelockEnabled = false
 
+    // True on Android TV (leanback) devices: the TV build keeps audio
+    // playing when the display goes off, so it never auto-pauses on
+    // audio-route loss and always holds the playback wake lock.
+    private val isTvDevice by lazy {
+        packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+    }
+
     private var scopeJob = Job()
     private var scope = CoroutineScope(Dispatchers.Main + scopeJob)
     private var ioScope = CoroutineScope(Dispatchers.IO + scopeJob)
@@ -647,7 +654,7 @@ class MusicService :
                 .setMediaSourceFactory(createMediaSourceFactory())
                 .setRenderersFactory(createRenderersFactory())
                 .setLoadControl(loadControl)
-                .setHandleAudioBecomingNoisy(true)
+                .setHandleAudioBecomingNoisy(!isTvDevice)
                 .setWakeMode(C.WAKE_MODE_NETWORK)
                 .setAudioAttributes(
                     AudioAttributes
@@ -841,7 +848,7 @@ class MusicService :
             .map { it[WakelockKey] ?: false }
             .distinctUntilChanged()
             .collectLatest(scope) { enabled ->
-                wakelockEnabled = enabled
+                wakelockEnabled = enabled || isTvDevice
                 updateWakeLock()
             }
 

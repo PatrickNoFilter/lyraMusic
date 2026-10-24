@@ -76,6 +76,10 @@ class TvMainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        // Start the service explicitly so playback survives the activity
+        // being stopped (e.g. TV display off) and unbinding. The service
+        // stops itself when idle via its own idle-stop.
+        startService(Intent(this, MusicService::class.java))
         isMusicServiceBound =
             bindService(
                 Intent(this, MusicService::class.java),
