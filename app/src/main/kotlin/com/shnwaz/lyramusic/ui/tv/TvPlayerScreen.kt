@@ -36,11 +36,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -205,11 +207,13 @@ fun TvPlayerScreen() {
                 ) {
                     itemsIndexed(queueWindows, key = { idx, _ -> idx }) { idx, window ->
                         val meta = window.mediaItem.metadata
+                        var isFocused by remember { mutableStateOf(false) }
                         Button(
                             onClick = { player.seekToDefaultPosition(idx) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 2.dp),
+                                .padding(vertical = 2.dp)
+                                .onFocusChanged { isFocused = it.isFocused },
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -224,7 +228,7 @@ fun TvPlayerScreen() {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = meta?.title ?: "Unknown",
-                                        color = Color.White,
+                                        color = if (isFocused) Color.Black else Color.White,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                     )
