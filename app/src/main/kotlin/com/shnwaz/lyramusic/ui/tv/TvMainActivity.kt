@@ -21,8 +21,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.lifecycle.lifecycleScope
 import com.shnwaz.lyramusic.LocalDatabase
+import com.shnwaz.lyramusic.LocalPlayerAwareWindowInsets
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.db.MusicDatabase
 import com.shnwaz.lyramusic.playback.MusicService
@@ -65,6 +68,7 @@ class TvMainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider(
                 LocalPlayerConnection provides playerConnection,
+                LocalPlayerAwareWindowInsets provides WindowInsets.systemBars,
                 LocalDatabase provides database,
             ) {
                 TvTheme {
