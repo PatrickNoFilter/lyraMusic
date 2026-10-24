@@ -55,6 +55,7 @@ import com.shnwaz.lyramusic.BuildConfig
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.ui.screens.Screens
 import com.shnwaz.lyramusic.ui.screens.navigationBuilder
+import com.shnwaz.lyramusic.ui.theme.OpenTuneTheme
 
 private val TvOrange = Color(0xFFE8A33D)
 private val TvBackground = Color(0xFF1A120B)
