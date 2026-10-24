@@ -50,7 +50,6 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import androidx.tv.material3.darkColorScheme
-import androidx.compose.material3.darkColorScheme as m3DarkColorScheme
 import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.BuildConfig
 import com.shnwaz.lyramusic.LocalPlayerConnection
@@ -137,7 +136,7 @@ fun TvNav() {
 
         // Original Lyra screens, hosted as-is in Lyra's own dark theme
         Box(modifier = Modifier.weight(1f)) {
-            androidx.compose.material3.MaterialTheme(colorScheme = m3DarkColorScheme(background = Color(0xFF1A120B), surface = Color(0xFF1A120B))) {
+            androidx.compose.material3.MaterialTheme(colorScheme = darkColorScheme(background = Color(0xFF1A120B), surface = Color(0xFF1A120B))) {
             NavHost(
                 navController = navController,
                 startDestination = Screens.Home.route,
