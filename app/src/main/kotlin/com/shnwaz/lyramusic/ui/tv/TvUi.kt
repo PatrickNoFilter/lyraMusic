@@ -79,6 +79,7 @@ fun TvMediaCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -106,6 +107,7 @@ fun <T> TvRail(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
+            color = Color.White,
             modifier = Modifier.padding(start = 32.dp, top = 16.dp, bottom = 8.dp),
         )
         LazyRow(

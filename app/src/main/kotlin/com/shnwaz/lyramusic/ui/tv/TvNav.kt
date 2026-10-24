@@ -9,6 +9,7 @@
 
 package com.shnwaz.lyramusic.ui.tv
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,9 @@ import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.LocalPlayerConnection
+
+/** Build label shown in the header so we can verify which APK is installed. Update on every build. */
+const val TV_BUILD_LABEL = "2026-10-24 16:45"
 
 private enum class TvTab(val label: String) {
     Home("Home"),
@@ -52,7 +57,11 @@ private enum class TvTab(val label: String) {
 fun TvNav() {
     var tab by rememberSaveable { mutableStateOf(TvTab.Home) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF1A120B)),
+    ) {
         // Top tab bar
         Row(
             modifier = Modifier
@@ -64,6 +73,13 @@ fun TvNav() {
             Text(
                 text = "Lyra TV",
                 style = MaterialTheme.typography.headlineSmall,
+                color = Color.White,
+                modifier = Modifier.padding(end = 4.dp),
+            )
+            Text(
+                text = TV_BUILD_LABEL,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF2196F3),
                 modifier = Modifier.padding(end = 16.dp),
             )
             TvTab.entries.forEach { entry ->
