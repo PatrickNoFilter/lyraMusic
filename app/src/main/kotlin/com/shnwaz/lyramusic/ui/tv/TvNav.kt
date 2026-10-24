@@ -3,13 +3,12 @@
  * Shnwaz (github.com/shnwazdeveloper)
  * Licensed Under GPL-3.0 | see git history for contributors
  *
- * TV navigation: top tab bar (Home/Search/Library/Player) plus a mini
- * now-playing bar, in Lyra's dark visual language. D-pad navigable.
+ * TV navigation: top tab bar (Home / Search / Library / Player) plus a
+ * mini now-playing bar. Everything is D-pad navigable.
  */
 
 package com.shnwaz.lyramusic.ui.tv
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,13 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
@@ -56,36 +52,23 @@ private enum class TvTab(val label: String) {
 fun TvNav() {
     var tab by rememberSaveable { mutableStateOf(TvTab.Home) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         // Top tab bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 48.dp, vertical = 16.dp),
+                .padding(horizontal = 32.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "Lyra TV",
                 style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
                 modifier = Modifier.padding(end = 16.dp),
             )
             TvTab.entries.forEach { entry ->
-                val selected = tab == entry
                 Button(
                     onClick = { tab = entry },
-                    colors = ButtonDefaults.colors(
-                        containerColor = if (selected) LyraTvOrange
-                        else Color(0xFF2A2018),
-                        contentColor = if (selected) LyraTvBackground
-                        else Color.White,
-                    ),
                 ) {
                     Text(entry.label)
                 }
@@ -121,7 +104,7 @@ private fun TvMiniPlayerBar(onOpenPlayer: () -> Unit) {
         onClick = onOpenPlayer,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 48.dp, vertical = 8.dp),
+            .padding(horizontal = 32.dp, vertical = 8.dp),
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -140,15 +123,13 @@ private fun TvMiniPlayerBar(onOpenPlayer: () -> Unit) {
                 Text(
                     text = current.title,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = current.artists.joinToString { it.name },
                     style = MaterialTheme.typography.bodySmall,
-                    color = LyraTvOrange,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -158,10 +139,6 @@ private fun TvMiniPlayerBar(onOpenPlayer: () -> Unit) {
                     val player = playerConnection.player
                     if (isPlaying) player.pause() else player.play()
                 },
-                colors = ButtonDefaults.colors(
-                    containerColor = LyraTvOrange,
-                    contentColor = LyraTvBackground,
-                ),
             ) {
                 Text(if (isPlaying) "Pause" else "Play")
             }
