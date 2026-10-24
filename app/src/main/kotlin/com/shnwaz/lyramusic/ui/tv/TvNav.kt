@@ -43,7 +43,7 @@ import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.LocalPlayerConnection
 
 /** Build label shown in the header so we can verify which APK is installed. Update on every build. */
-const val TV_BUILD_LABEL = "v0.2.0 • 2026-10-24 19:35"
+const val TV_BUILD_LABEL = "v0.3.0 • 2026-10-24 20:05"
 
 private enum class TvTab(val label: String) {
     Home("Home"),
@@ -94,7 +94,7 @@ fun TvNav() {
         // Content
         when (tab) {
             TvTab.Home -> TvHomeScreen(onOpenPlayer = { tab = TvTab.Player })
-            TvTab.Search -> TvSearchScreen()
+            TvTab.Search -> TvSearchScreen(onOpenPlayer = { tab = TvTab.Player })
             TvTab.Library -> TvLibraryScreen()
             TvTab.Player -> TvPlayerScreen()
         }
