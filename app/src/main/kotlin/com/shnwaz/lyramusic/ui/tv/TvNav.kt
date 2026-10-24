@@ -134,8 +134,9 @@ fun TvNav() {
             }
         }
 
-        // Original Lyra screens, hosted as-is
+        // Original Lyra screens, hosted as-is in Lyra's own dark theme
         Box(modifier = Modifier.weight(1f)) {
+            OpenTuneTheme(darkTheme = true) {
             NavHost(
                 navController = navController,
                 startDestination = Screens.Home.route,
@@ -148,6 +149,7 @@ fun TvNav() {
                 composable("tv_player") {
                     TvPlayerScreen()
                 }
+            }
             }
         }
 
