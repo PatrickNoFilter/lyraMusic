@@ -43,7 +43,7 @@ import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.LocalPlayerConnection
 
 /** Build label shown in the header so we can verify which APK is installed. Update on every build. */
-const val TV_BUILD_LABEL = "v0.3.0 • 2026-10-24 20:05"
+const val TV_BUILD_LABEL = "v0.3.0 • 2026-10-24 20:25"
 
 private enum class TvTab(val label: String) {
     Home("Home"),
