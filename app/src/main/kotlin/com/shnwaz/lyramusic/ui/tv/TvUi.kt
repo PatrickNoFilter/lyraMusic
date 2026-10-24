@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,14 @@ import coil3.compose.AsyncImage
 @Composable
 fun TvTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = darkColorScheme(),
+        colorScheme = darkColorScheme(
+            background = Color(0xFF1A120B),
+            surface = Color(0xFF2A2018),
+            primary = Color(0xFFE8A33D),
+            onPrimary = Color(0xFF1A120B),
+            onBackground = Color.White,
+            onSurface = Color.White,
+        ),
         content = content,
     )
 }
