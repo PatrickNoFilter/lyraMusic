@@ -43,7 +43,7 @@ import coil3.compose.AsyncImage
 import com.shnwaz.lyramusic.LocalPlayerConnection
 
 /** Build label shown in the header so we can verify which APK is installed. Update on every build. */
-const val TV_BUILD_LABEL = "2026-10-24 16:45"
+const val TV_BUILD_LABEL = "v0.0.1 • 2026-10-24 17:10"
 
 private enum class TvTab(val label: String) {
     Home("Home"),
@@ -60,7 +60,7 @@ fun TvNav() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A120B)),
+            .background(Color.Black),
     ) {
         // Top tab bar
         Row(

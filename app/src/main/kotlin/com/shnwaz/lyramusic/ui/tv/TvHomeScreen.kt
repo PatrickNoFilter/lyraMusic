@@ -9,15 +9,23 @@
 
 package com.shnwaz.lyramusic.ui.tv
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.tv.material3.Button
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.innertube.models.AlbumItem
 import com.shnwaz.lyramusic.innertube.models.PlaylistItem
@@ -49,6 +57,32 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
     }
 
     LazyColumn(modifier = Modifier.fillMaxSize()) {
+        // Refresh row: reloads home feed + charts; status shows whether
+        // each feed loaded, so a missing row can be diagnosed.
+        item(key = "refresh_row") {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 8.dp),
+            ) {
+                Button(
+                    onClick = {
+                        homeViewModel.refresh()
+                        chartsViewModel.loadCharts()
+                    },
+                ) {
+                    Text("Refresh home")
+                }
+                Text(
+                    text = "  home: " + if (homePage == null) "loading…" else "${homePage?.sections?.size ?: 0} sections" +
+                        "  •  charts: " + if (chartsPage == null) "loading…" else "${chartsPage?.sections?.size ?: 0} sections",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF2196F3),
+                    modifier = Modifier.padding(start = 16.dp, top = 12.dp),
+                )
+            }
+        }
+
         val picks = quickPicks
         if (!picks.isNullOrEmpty()) {
             item(key = "quick_picks") {

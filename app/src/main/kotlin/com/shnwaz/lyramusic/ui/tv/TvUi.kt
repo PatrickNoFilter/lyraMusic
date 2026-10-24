@@ -40,10 +40,10 @@ import coil3.compose.AsyncImage
 fun TvTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = darkColorScheme(
-            background = Color(0xFF1A120B),
-            surface = Color(0xFF2A2018),
+            background = Color.Black,
+            surface = Color(0xFF1E1E1E),
             primary = Color(0xFF2196F3),
-            onPrimary = Color(0xFF1A120B),
+            onPrimary = Color.Black,
             onBackground = Color.White,
             onSurface = Color.White,
         ),
