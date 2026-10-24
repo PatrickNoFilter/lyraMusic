@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -27,9 +30,11 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.shnwaz.lyramusic.LocalPlayerConnection
+import com.shnwaz.lyramusic.innertube.YouTube
 import com.shnwaz.lyramusic.innertube.models.AlbumItem
 import com.shnwaz.lyramusic.innertube.models.PlaylistItem
 import com.shnwaz.lyramusic.innertube.models.SongItem
+import com.shnwaz.lyramusic.innertube.models.YTItem
 import com.shnwaz.lyramusic.models.toMediaMetadata
 import com.shnwaz.lyramusic.playback.queues.YouTubeAlbumRadio
 import com.shnwaz.lyramusic.playback.queues.YouTubeQueue
@@ -50,6 +55,15 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
     val homePage by homeViewModel.homePage.collectAsStateWithLifecycle()
 
     androidx.compose.runtime.LaunchedEffect(Unit) { chartsViewModel.loadCharts() }
+
+    // Dedicated community-playlists rail: searched directly via the
+    // Innertube community-playlist filter, so it does not depend on the
+    // variable home-feed sections.
+    var communityPlaylists by remember { mutableStateOf<List<YTItem>>(emptyList()) }
+    LaunchedEffect(Unit) {
+        YouTube.search("music", YouTube.SearchFilter.FILTER_COMMUNITY_PLAYLIST)
+            .onSuccess { communityPlaylists = it.items }
+    }
 
     fun playSongItem(item: SongItem) {
         playerConnection?.playQueue(YouTubeQueue.radio(item.toMediaMetadata()))
@@ -120,6 +134,42 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
                         onClick = {
                             playerConnection?.playQueue(YouTubeAlbumRadio(album.playlistId))
                             onOpenPlayer()
+                        },
+                    )
+                }
+            }
+        }
+
+        if (communityPlaylists.isNotEmpty()) {
+            item(key = "community_playlists") {
+                TvRail(
+                    title = "Community playlists",
+                    items = communityPlaylists,
+                    key = { it.id },
+                ) { item ->
+                    TvMediaCard(
+                        title = item.title,
+                        subtitle = (item as? SongItem)?.artists?.joinToString { it.name },
+                        imageUrl = item.thumbnail,
+                        onClick = {
+                            when (item) {
+                                is SongItem -> playSongItem(item)
+                                is AlbumItem -> {
+                                    playerConnection?.playQueue(
+                                        YouTubeAlbumRadio(item.playlistId),
+                                    )
+                                    onOpenPlayer()
+                                }
+                                is PlaylistItem -> {
+                                    item.playEndpoint?.let { endpoint ->
+                                        playerConnection?.playQueue(
+                                            YouTubeQueue(endpoint),
+                                        )
+                                        onOpenPlayer()
+                                    }
+                                }
+                                else -> Unit
+                            }
                         },
                     )
                 }
