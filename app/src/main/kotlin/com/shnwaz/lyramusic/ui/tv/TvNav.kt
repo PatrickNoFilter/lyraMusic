@@ -219,3 +219,21 @@ private fun TvMiniPlayerBar(onOpenPlayer: () -> Unit) {
         }
     }
 }
+
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+fun TvEmptyState(message: String) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(48.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White.copy(alpha = 0.6f),
+        )
+    }
+}
