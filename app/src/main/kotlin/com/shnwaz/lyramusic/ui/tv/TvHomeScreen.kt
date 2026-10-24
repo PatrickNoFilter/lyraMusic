@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import com.shnwaz.lyramusic.LocalPlayerConnection
 import com.shnwaz.lyramusic.innertube.models.AlbumItem
+import com.shnwaz.lyramusic.innertube.models.PlaylistItem
 import com.shnwaz.lyramusic.innertube.models.SongItem
 import com.shnwaz.lyramusic.models.toMediaMetadata
 import com.shnwaz.lyramusic.playback.queues.YouTubeAlbumRadio
@@ -112,6 +113,14 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
                                         )
                                         onOpenPlayer()
                                     }
+                                    is PlaylistItem -> {
+                                        item.playEndpoint?.let { endpoint ->
+                                            playerConnection?.playQueue(
+                                                YouTubeQueue(endpoint),
+                                            )
+                                            onOpenPlayer()
+                                        }
+                                    }
                                     else -> Unit
                                 }
                             },
@@ -141,6 +150,14 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
                                             YouTubeAlbumRadio(item.playlistId),
                                         )
                                         onOpenPlayer()
+                                    }
+                                    is PlaylistItem -> {
+                                        item.playEndpoint?.let { endpoint ->
+                                            playerConnection?.playQueue(
+                                                YouTubeQueue(endpoint),
+                                            )
+                                            onOpenPlayer()
+                                        }
                                     }
                                     else -> Unit
                                 }
