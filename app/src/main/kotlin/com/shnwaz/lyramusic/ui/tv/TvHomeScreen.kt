@@ -38,6 +38,7 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
     val quickPicks by homeViewModel.quickPicks.collectAsStateWithLifecycle()
     val newReleases by newReleaseViewModel.newReleaseAlbums.collectAsStateWithLifecycle()
     val chartsPage by chartsViewModel.chartsPage.collectAsStateWithLifecycle()
+    val homePage by homeViewModel.homePage.collectAsStateWithLifecycle()
 
     androidx.compose.runtime.LaunchedEffect(Unit) { chartsViewModel.loadCharts() }
 
@@ -120,7 +121,37 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
             }
         }
 
-        if (picks.isNullOrEmpty() && newReleases.isEmpty() && chartsPage == null) {
+        homePage?.sections?.forEach { section ->
+            if (section.items.isNotEmpty()) {
+                item(key = "home_${section.title}") {
+                    TvRail(
+                        title = section.title,
+                        items = section.items,
+                        key = { it.id },
+                    ) { item ->
+                        TvMediaCard(
+                            title = item.title,
+                            subtitle = (item as? SongItem)?.artists?.joinToString { it.name },
+                            imageUrl = item.thumbnail,
+                            onClick = {
+                                when (item) {
+                                    is SongItem -> playSongItem(item)
+                                    is AlbumItem -> {
+                                        playerConnection?.playQueue(
+                                            YouTubeAlbumRadio(item.playlistId),
+                                        )
+                                        onOpenPlayer()
+                                    }
+                                    else -> Unit
+                                }
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+        if (picks.isNullOrEmpty() && newReleases.isEmpty() && chartsPage == null && homePage == null) {
             item(key = "loading") {
                 TvEmptyState("Loading…")
             }
