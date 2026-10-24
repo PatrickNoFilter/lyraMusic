@@ -65,6 +65,17 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
             .onSuccess { communityPlaylists = it.items }
     }
 
+    // Indonesian-oriented playlist rails, searched directly via the
+    // Innertube community-playlist filter.
+    var indonesianHits by remember { mutableStateOf<List<YTItem>>(emptyList()) }
+    var popIndonesia by remember { mutableStateOf<List<YTItem>>(emptyList()) }
+    LaunchedEffect(Unit) {
+        YouTube.search("lagu indonesia", YouTube.SearchFilter.FILTER_COMMUNITY_PLAYLIST)
+            .onSuccess { indonesianHits = it.items }
+        YouTube.search("lagu pop indonesia", YouTube.SearchFilter.FILTER_COMMUNITY_PLAYLIST)
+            .onSuccess { popIndonesia = it.items }
+    }
+
     fun playSongItem(item: SongItem) {
         playerConnection?.playQueue(YouTubeQueue.radio(item.toMediaMetadata()))
         onOpenPlayer()
@@ -145,6 +156,79 @@ fun TvHomeScreen(onOpenPlayer: () -> Unit) {
                 TvRail(
                     title = "Community playlists",
                     items = communityPlaylists,
+                    key = { it.id },
+                ) { item ->
+                    TvMediaCard(
+                        title = item.title,
+                        subtitle = (item as? SongItem)?.artists?.joinToString { it.name },
+                        imageUrl = item.thumbnail,
+                        onClick = {
+                            when (item) {
+                                is SongItem -> playSongItem(item)
+                                is AlbumItem -> {
+                                    playerConnection?.playQueue(
+                                        YouTubeAlbumRadio(item.playlistId),
+                                    )
+                                    onOpenPlayer()
+                                }
+                                is PlaylistItem -> {
+                                    item.playEndpoint?.let { endpoint ->
+                                        playerConnection?.playQueue(
+                                            YouTubeQueue(endpoint),
+                                        )
+                                        onOpenPlayer()
+                                    }
+                                }
+                                else -> Unit
+                            }
+                        },
+                    )
+                }
+            }
+        }
+
+
+        if (indonesianHits.isNotEmpty()) {
+            item(key = "indonesian_hits") {
+                TvRail(
+                    title = "Indonesian Hits",
+                    items = indonesianHits,
+                    key = { it.id },
+                ) { item ->
+                    TvMediaCard(
+                        title = item.title,
+                        subtitle = (item as? SongItem)?.artists?.joinToString { it.name },
+                        imageUrl = item.thumbnail,
+                        onClick = {
+                            when (item) {
+                                is SongItem -> playSongItem(item)
+                                is AlbumItem -> {
+                                    playerConnection?.playQueue(
+                                        YouTubeAlbumRadio(item.playlistId),
+                                    )
+                                    onOpenPlayer()
+                                }
+                                is PlaylistItem -> {
+                                    item.playEndpoint?.let { endpoint ->
+                                        playerConnection?.playQueue(
+                                            YouTubeQueue(endpoint),
+                                        )
+                                        onOpenPlayer()
+                                    }
+                                }
+                                else -> Unit
+                            }
+                        },
+                    )
+                }
+            }
+        }
+
+        if (popIndonesia.isNotEmpty()) {
+            item(key = "pop_indonesia") {
+                TvRail(
+                    title = "Pop Indonesia",
+                    items = popIndonesia,
                     key = { it.id },
                 ) { item ->
                     TvMediaCard(
