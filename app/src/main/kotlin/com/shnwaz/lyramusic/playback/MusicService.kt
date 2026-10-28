@@ -41,6 +41,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import android.util.Log
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.EVENT_POSITION_DISCONTINUITY
@@ -405,6 +406,39 @@ class MusicService :
     @DownloadCache
     lateinit var downloadCache: Cache
 
+    // Diagnostic: logs every play/pause decision with Media3's own reason code,
+    // so a mystery pause can be traced to focus loss, noisy broadcast, remote
+    // command, or user request. Tag: IramaDiag. Remove once the sleep-pause is fixed.
+    private val diagnosticListener =
+        object : Player.Listener {
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                val reasonName =
+                    when (reason) {
+                        Player.PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST -> "USER_REQUEST"
+                        Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_FOCUS_LOSS -> "AUDIO_FOCUS_LOSS"
+                        Player.PLAY_WHEN_READY_CHANGE_REASON_AUDIO_BECOMING_NOISY -> "AUDIO_BECOMING_NOISY"
+                        Player.PLAY_WHEN_READY_CHANGE_REASON_REMOTE -> "REMOTE"
+                        Player.PLAY_WHEN_READY_CHANGE_REASON_END_OF_MEDIA_ITEM -> "END_OF_MEDIA_ITEM"
+                        else -> "UNKNOWN($reason)"
+                    }
+                Log.i(
+                    "IramaDiag",
+                    "playWhenReady=$playWhenReady reason=$reasonName state=${player.playbackState} pos=${player.currentPosition}",
+                )
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                Log.i(
+                    "IramaDiag",
+                    "playbackState=$playbackState playWhenReady=${player.playWhenReady} pos=${player.currentPosition}",
+                )
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                Log.i("IramaDiag", "playerError: code=${error.errorCode} ${error.message}")
+            }
+        }
+
     lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
 
@@ -669,6 +703,8 @@ class MusicService :
                 .build()
                 .apply {
                     addListener(this@MusicService)
+                    addListener(diagnosticListener)
+                    Log.i("IramaDiag", "diagnostic listener attached")
                     sleepTimer = SleepTimer(scope, this)
                     addListener(sleepTimer)
                     addAnalyticsListener(PlaybackStatsListener(false, this@MusicService))
