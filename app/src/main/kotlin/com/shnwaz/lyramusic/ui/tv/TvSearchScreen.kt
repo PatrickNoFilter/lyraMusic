@@ -1,7 +1,7 @@
 /*
  * TV search: query field (system IME / on-screen keyboard) + song, playlist,
  * album and artist results from the Innertube backend, each as a full-width
- * horizontal row. D-pad navigable.
+ * horizontal row, plus a recorded recent-search list. D-pad navigable.
  */
 
 package com.shnwaz.lyramusic.ui.tv
@@ -9,10 +9,14 @@ package com.shnwaz.lyramusic.ui.tv
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -23,9 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.tv.material3.Button
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
 import com.shnwaz.lyramusic.LocalPlayerConnection
@@ -37,8 +44,13 @@ import com.shnwaz.lyramusic.innertube.models.SongItem
 import com.shnwaz.lyramusic.models.toMediaMetadata
 import com.shnwaz.lyramusic.playback.queues.YouTubeAlbumRadio
 import com.shnwaz.lyramusic.playback.queues.YouTubeQueue
+import com.shnwaz.lyramusic.utils.rememberPreference
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+
+private val TvRecentSearchesKey = stringPreferencesKey("tv_recent_searches")
+private const val TvMaxRecentSearches = 10
+private const val TvRecentSearchesSeparator = "\u001F"
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
@@ -47,6 +59,10 @@ fun TvSearchScreen(onOpenPlayer: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     var query by rememberSaveable { mutableStateOf("") }
+    var recentSearchesRaw by rememberPreference(TvRecentSearchesKey, "")
+    val recentSearches = recentSearchesRaw
+        .split(TvRecentSearchesSeparator)
+        .filter { it.isNotEmpty() }
     var songs by remember { mutableStateOf<List<SongItem>>(emptyList()) }
     var playlists by remember { mutableStateOf<List<PlaylistItem>>(emptyList()) }
     var albums by remember { mutableStateOf<List<AlbumItem>>(emptyList()) }
@@ -54,9 +70,12 @@ fun TvSearchScreen(onOpenPlayer: () -> Unit) {
     var searching by remember { mutableStateOf(false) }
     var searched by remember { mutableStateOf(false) }
 
-    fun doSearch() {
-        val q = query.trim()
+    fun doSearch(searchQuery: String? = null) {
+        val q = (searchQuery ?: query).trim()
         if (q.isBlank() || searching) return
+        recentSearchesRaw = (listOf(q) + recentSearches.filter { it != q })
+            .take(TvMaxRecentSearches)
+            .joinToString(TvRecentSearchesSeparator)
         searching = true
         searched = true
         scope.launch {
@@ -126,6 +145,38 @@ fun TvSearchScreen(onOpenPlayer: () -> Unit) {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp, vertical = 8.dp),
         )
+
+        if (recentSearches.isNotEmpty()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 4.dp),
+            ) {
+                Text("Recent searches")
+                Spacer(modifier = Modifier.weight(1f))
+                Button(
+                    onClick = { recentSearchesRaw = "" },
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                ) {
+                    Text("Clear")
+                }
+            }
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 32.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                items(recentSearches, key = { it }) { recent ->
+                    Button(onClick = {
+                        query = recent
+                        doSearch(recent)
+                    }) {
+                        Text(recent)
+                    }
+                }
+            }
+        }
 
         when {
             searching -> TvEmptyState("Searching…")
