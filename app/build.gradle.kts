@@ -57,7 +57,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.shnwaz.lyramusic"
+        applicationId = "com.patrisius.irama"
         minSdk = 26
         targetSdk = 34
         versionCode = 145

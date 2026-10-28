@@ -71,7 +71,7 @@ fun TvNav() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Lyra TV",
+                text = "Irama",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White,
                 modifier = Modifier.padding(end = 4.dp),
